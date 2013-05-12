@@ -31,12 +31,16 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
+ * This class represents peer
+ *
  * @author Osipov Stanislav
  */
 public final class Peer implements Runnable {
 
     @NotNull
     private final static Logger log = Logger.getLogger(Peer.class.getName());
+
+    private static final int PEER_TIME_LIMIT = 200;
 
     private boolean shutdownFlag = false;
 
@@ -73,7 +77,17 @@ public final class Peer implements Runnable {
     @NotNull
     private ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(2);
 
-
+    /**
+     * Initializes peer
+     *
+     * @param rootDir peer root directory
+     * @param host    hostname
+     * @param port    port number
+     * @param logfile logfile
+     * @param isSeed  mode
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public Peer(@NotNull File rootDir, @NotNull InetAddress host, int port, @NotNull String logfile, boolean isSeed) throws IOException, ClassNotFoundException {
         this.host = host;
         this.port = port;
@@ -85,6 +99,11 @@ public final class Peer implements Runnable {
         makeConnection();
     }
 
+    /**
+     * Adds torrents
+     *
+     * @param torrentDir directory where  the torrent files are
+     */
     public void addBooks(@NotNull File torrentDir) {
         FileFilter filter = new FileFilter() {
             @Override
@@ -116,6 +135,9 @@ public final class Peer implements Runnable {
         }
     }
 
+    /**
+     * Shutdown peer
+     */
     public void shutdownPeer() {
         shutdownFlag = true;
         selector.wakeup();
@@ -169,7 +191,7 @@ public final class Peer implements Runnable {
             public void run() {
                 shutdownPeer();
             }
-        }, 200, TimeUnit.SECONDS);
+        }, PEER_TIME_LIMIT, TimeUnit.SECONDS);
     }
 
     private void sendBookRequests() throws IOException {
@@ -251,10 +273,6 @@ public final class Peer implements Runnable {
                     }
 
                 }
-
-//                if(!socketChannel.isConnected()) {
-//                    makeConnection();
-//                }
 
             } catch (IOException e) {
                 log.log(Level.SEVERE, "Strange I/O exception", e);
@@ -357,7 +375,7 @@ public final class Peer implements Runnable {
                 }
                 rawReceivedData.addData(readQuery.getReadData());
                 for (Packet packet : rawReceivedData.makeMessages()) {
-                    switch (packet.getQueryType()) {
+                    switch (packet.getPacketType()) {
                         case CHAPTER_REQUEST:
                             sendChapter(packet.getChapterHeader());
                             break;
@@ -368,6 +386,10 @@ public final class Peer implements Runnable {
                 }
             } catch (InterruptedException e) {
                 log.log(Level.SEVERE, "Interrupted while reading  ", e);
+            } catch (ClassNotFoundException e) {
+                log.log(Level.SEVERE, "Strange Exception", e);
+            } catch (IOException e) {
+                log.log(Level.SEVERE, "Packet Corrupted", e);
             }
         }
 

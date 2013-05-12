@@ -4,11 +4,14 @@ import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import packets.Packet;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This class represents the sequence of data read from the socket
+ *
  * @author Osipov Stanislav
  */
 public final class RawReceivedData {
@@ -18,7 +21,15 @@ public final class RawReceivedData {
     @NotNull
     private ByteBuffer dataBuffer = ByteBuffer.allocate(8064);
 
-    public List<Packet> makeMessages() {
+    /**
+     * Creates list of fully read packets
+     *
+     * @return list of packets
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    @NotNull
+    public List<Packet> makeMessages() throws IOException, ClassNotFoundException {
         List<Packet> messages = new ArrayList<>();
         dataBuffer.flip();
         while (dataBuffer.remaining() > 0) {
@@ -38,7 +49,12 @@ public final class RawReceivedData {
         return messages;
     }
 
-    public void addData(byte[] readData) {
+    /**
+     * Adds data sequence
+     *
+     * @param readData data from socket
+     */
+    public void addData(@NotNull byte[] readData) {
         dataBuffer.put(readData);
     }
 }

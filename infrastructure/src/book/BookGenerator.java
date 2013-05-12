@@ -5,12 +5,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
+ * This class is used to generate random book instance and torrent file for it
+ *
  * @author Osipov Stanislav
  */
 public final class BookGenerator {
 
     public static long idCounter = 0;
 
+    /**
+     * Main method
+     *
+     * @param args must be {[/output/directories]}
+     */
     public static void main(String[] args) {
         for (String arg : args) {
             long bookId = ++idCounter;
@@ -20,12 +27,15 @@ public final class BookGenerator {
             try {
                 book.dump(bookPath.toFile());
                 book.getHeader().dump(torrentPath.toFile().getAbsolutePath());
-                Book b2 = Book.read(bookPath.toFile());
-                BookHeader head = BookHeader.read(torrentPath.toFile().getAbsolutePath());
-                int a = 9;
+                Book.read(bookPath.toFile());
+                BookHeader.read(torrentPath.toFile().getAbsolutePath());
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
     }
+
+    private BookGenerator() {
+    }
+
 }

@@ -77,7 +77,7 @@ public final class Book implements Serializable {
     /**
      * Generates random book with given bookid
      *
-     * @param bookId bookid
+     * @param bookId book id
      * @return random book
      */
     @NotNull

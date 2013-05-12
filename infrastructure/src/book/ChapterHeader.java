@@ -3,6 +3,8 @@ package book;
 import java.io.Serializable;
 
 /**
+ * This class represents chapter header
+ *
  * @author Osipov Stanislav
  */
 public final class ChapterHeader implements Serializable {
@@ -10,12 +12,22 @@ public final class ChapterHeader implements Serializable {
     private long bookId;
     private int chapterNumber;
 
-
+    /**
+     * Creates chapter header
+     *
+     * @param bookId        book which this chapter belongs
+     * @param chapterNumber chapter number
+     */
     public ChapterHeader(long bookId, int chapterNumber) {
         this.bookId = bookId;
         this.chapterNumber = chapterNumber;
     }
 
+    /**
+     * Book id getter
+     *
+     * @return book id
+     */
     public long getBookId() {
         return bookId;
     }

@@ -5,6 +5,8 @@ import com.sun.istack.internal.NotNull;
 import java.io.*;
 
 /**
+ * Objects of this class are used as torrent files
+ *
  * @author Osipov Stanislav
  */
 public final class BookHeader implements Serializable {
@@ -12,15 +14,31 @@ public final class BookHeader implements Serializable {
     private long id;
     private int chapterAmount;
 
+    /**
+     * Creates BookHeader
+     *
+     * @param id            book id
+     * @param chapterAmount chapter amount in full book
+     */
     public BookHeader(long id, int chapterAmount) {
         this.id = id;
         this.chapterAmount = chapterAmount;
     }
 
+    /**
+     * Id getter
+     *
+     * @return id
+     */
     public long getId() {
         return id;
     }
 
+    /**
+     * Chapter amount getter
+     *
+     * @return chapter amount
+     */
     public int getChapterAmount() {
         return chapterAmount;
     }
@@ -33,10 +51,8 @@ public final class BookHeader implements Serializable {
 
         BookHeader that = (BookHeader) o;
 
-        if (chapterAmount != that.chapterAmount) return false;
-        if (id != that.id) return false;
+        return chapterAmount == that.chapterAmount && id == that.id;
 
-        return true;
     }
 
     @Override
@@ -54,12 +70,26 @@ public final class BookHeader implements Serializable {
                 '}';
     }
 
+    /**
+     * Serializes book to file
+     *
+     * @param filename file name
+     * @throws IOException
+     */
     public void dump(@NotNull String filename) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
             oos.writeObject(this);
         }
     }
 
+    /**
+     * DeSerializes book
+     *
+     * @param filename file name
+     * @return book
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     @NotNull
     public static BookHeader read(@NotNull String filename) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {

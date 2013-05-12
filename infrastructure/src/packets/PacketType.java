@@ -1,6 +1,8 @@
 package packets;
 
 /**
+ * Enum with packet types
+ *
  * @author Osipov Stanislav
  */
 public enum PacketType {

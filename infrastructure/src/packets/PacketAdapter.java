@@ -10,31 +10,59 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 
 /**
+ * Adapter for Packet
+ *
  * @author Osipov Stanislav
  */
 public abstract class PacketAdapter implements Packet {
 
 
-    @Override
-    public List<ChapterHeader> getContentList() {
-        return null;
-    }
-
+    /**
+     * Book request list getter
+     *
+     * @return book request list
+     */
     @Override
     public List<ChapterHeader> getBookRequest() {
         return null;
     }
 
+    /**
+     * Chapter getter
+     *
+     * @return chapter
+     */
     @Override
     public Chapter getChapter() {
         return null;
     }
 
+    /**
+     * Content list getter
+     *
+     * @return content list
+     */
+    @Override
+    public List<ChapterHeader> getContentList() {
+        return null;
+    }
+
+    /**
+     * Chapter header getter
+     *
+     * @return chapter header
+     */
     @Override
     public ChapterHeader getChapterHeader() {
         return null;
     }
 
+    /**
+     * Converts to byte array
+     *
+     * @return bytes sequence which are represent this object
+     * @throws IOException
+     */
     @Override
     public byte[] toByteArray() throws IOException {
         byte[] data;

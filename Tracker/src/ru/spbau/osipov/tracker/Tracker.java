@@ -32,6 +32,7 @@ import java.util.logging.SimpleFormatter;
  */
 public final class Tracker implements Runnable {
 
+    private static final int TRACKER_TIME_LIMIT = 240;
     @NotNull
     private Logger log = Logger.getLogger(Tracker.class.getName());
 
@@ -137,7 +138,7 @@ public final class Tracker implements Runnable {
             public void run() {
                 shutdownTracker();
             }
-        }, 240, TimeUnit.SECONDS);
+        }, TRACKER_TIME_LIMIT, TimeUnit.SECONDS);
     }
 
     private void send(@NotNull byte[] data, @NotNull SocketChannel peer) {
@@ -156,6 +157,8 @@ public final class Tracker implements Runnable {
     }
 
     /**
+     * Selector thread
+     *
      * @see Thread#run()
      */
     @Override
@@ -355,7 +358,7 @@ public final class Tracker implements Runnable {
                 }
                 rawReceivedData.addData(readQuery.getReadData());
                 for (Packet packet : rawReceivedData.makeMessages()) {
-                    switch (packet.getQueryType()) {
+                    switch (packet.getPacketType()) {
                         case CONTENT_LIST:
                             indexUpdater.submit(new UpdateChapterIndexTask(readQuery.getSource(), packet.getContentList()));
                             break;
@@ -370,6 +373,10 @@ public final class Tracker implements Runnable {
                 rawSendDataMap.put(readQuery.getSource(), rawReceivedData);
             } catch (InterruptedException e) {
 //                log.log(Level.SEVERE, "Interrupted while reading  ", e);
+            } catch (ClassNotFoundException e) {
+                log.log(Level.SEVERE, "Strange Exception", e);
+            } catch (IOException e) {
+                log.log(Level.SEVERE, "Packet Corrupted", e);
             }
         }
 
@@ -538,35 +545,11 @@ public final class Tracker implements Runnable {
             for (SocketChannel socketChannel : pendingData.keySet()) {
                 if (!socketChannel.isConnected()) {
                     pendingData.remove(socketChannel);
-//                    trackerService.submit(new CloseConnectionTask(socketChannel));
                 }
             }
         }
     }
 
-
-//    private class CloseConnectionTask implements Runnable {
-//        @NotNull
-//        private final SocketChannel seed;
-//
-//        public CloseConnectionTask(@NotNull SocketChannel seed) {
-//            this.seed = seed;
-//        }
-//
-//        /**
-//         * @see Thread#run()
-//         */
-//        @Override
-//        public void run() {
-//            log.info("Close connection " + seed.toString());
-//            try {
-//                seed.close();
-//            } catch (IOException e) {
-//                log.log(Level.SEVERE, "IO exception during close socket channel " + seed.toString(), e);
-//            }
-//            indexUpdater.submit(new RemoveSeedTask(seed));
-//        }
-//    }
 
     /**
      * Creates and starts tracker thread

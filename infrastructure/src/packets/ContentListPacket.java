@@ -6,6 +6,8 @@ import com.sun.istack.internal.NotNull;
 import java.util.List;
 
 /**
+ * Packet with content list
+ *
  * @author Osipov Stanislav
  */
 public final class ContentListPacket extends PacketAdapter {
@@ -22,7 +24,7 @@ public final class ContentListPacket extends PacketAdapter {
 
     @NotNull
     @Override
-    public PacketType getQueryType() {
+    public PacketType getPacketType() {
         return queryType;
     }
 
